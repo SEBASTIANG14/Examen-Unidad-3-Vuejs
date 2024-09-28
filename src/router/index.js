@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../interfaces/Home.vue';
 import Login from '../interfaces/Login.vue';
+import DetallePelicula from '../interfaces/DetallePelicula.vue';
 
 const routes = [
   {
@@ -13,7 +14,12 @@ const routes = [
     name: 'Login',
     component: Login,
   },
-  // Otras rutas...
+  //Ruta para obtener los detalles de una pelicula
+  {
+    path: '/movie/:id',
+    name: 'MovieDetails',
+    component: DetallePelicula,
+  }
 ];
 
 const router = createRouter({

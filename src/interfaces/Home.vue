@@ -1,187 +1,206 @@
 <template>
-    <div>
-      <div class="nav">
-        <h1>Peliculas algo mal <i class="bi bi-fire"></i></h1>
-        <router-link class="login-link" to="/login">Iniciar Sesión</router-link>
+  <div>
+    <div class="nav">
+      <h1>Peliculas algo mal <i class="bi bi-fire"></i></h1>
+      <router-link class="login-link" to="/login">Iniciar Sesión</router-link>
+    </div>
+    
+    <div class="image-slider" @mouseover="pauseSlider" @mouseleave="resumeSlider">
+      <img v-if="images.length" :src="images[currentImage]" alt="Imagen Deslizante" />
+      <p v-else>Cargando imágenes...</p>
+      <div class="input-container">
+        <i class="bi bi-search"></i>
+        <input type="text" class="overlay-input" placeholder="Buscar, Serie, Pelicula o persona...">
       </div>
-      
-      <div class="image-slider" @mouseover="pauseSlider" @mouseleave="resumeSlider">
-        <img v-if="images.length" :src="images[currentImage]" alt="Imagen Deslizante" />
-        <p v-else>Cargando imágenes...</p>
-        <div class="input-container">
-          <i class="bi bi-search"></i>
-          <input type="text" class="overlay-input" placeholder="Buscar, Serie, Pelicula o persona...">
-        </div>
-      </div>
-  
-      <!-- Seccion 1 -->
-      <div class="now-playing-section">
-        <h2>Películas en Cartelera</h2>
-        <div class="now-playing-slider">
-          <button @click="prevMovie" class="nav-button left">❮</button>
-          <div class="movie-container">
-            <div class="movies-wrapper" :style="{ transform: `translateX(-${currentNowPlayingIndex * movieWidth}px)` }">
+    </div>
+
+    <!-- Seccion 1 -->
+    <div class="now-playing-section">
+      <h2>Películas en Cartelera</h2>
+      <div class="now-playing-slider">
+        <button @click="prevMovie" class="nav-button left">❮</button>
+        <div class="movie-container">
+          <div class="movies-wrapper" :style="{ transform: `translateX(-${currentNowPlayingIndex * movieWidth}px)` }">
+            <router-link
+              v-for="(movie, index) in nowPlayingImages"
+              :key="index"
+              :to="`/movie/${movie.id}`"
+            >
               <img
-                v-for="(movie, index) in nowPlayingImages"
-                :key="index"
-                :src="movie"
+                :src="movie.poster_path"
                 alt="Now Playing Movie"
                 class="movie-image"
               />
-            </div>
+              <p>{{ movie.title }}</p>
+            </router-link>
           </div>
-          <button @click="nextMovie" class="nav-button right">❯</button>
         </div>
+        <button @click="nextMovie" class="nav-button right">❯</button>
       </div>
-
-      <!-- Sección 2 -->
-        <div class="popular-movies-section">
-        <h2>Películas Populares</h2>
-            <div class="now-playing-slider">
-                <button @click="prevPopularMovie" class="nav-button left">❮</button>
-                <div class="movie-container">
-                    <div class="movies-wrapper" :style="{ transform: `translateX(-${currentPopularIndex * movieWidth}px)` }">
-                        <img
-                        v-for="(movie, index) in popularImages"
-                        :key="index"
-                        :src="movie"
-                        alt="Película Popular"
-                        class="movie-image"
-                        />
-                    </div>
-                </div>
-                <button @click="nextPopularMovie" class="nav-button right">❯</button>
-            </div>
-        </div>
-
     </div>
-  </template>
-  
-  <script>
-  export default {
-    name: 'Home',
-    data() {
-      return {
-        images: [],  
-        currentImage: 0,
-        interval: null,
-        nowPlayingImages: [],
-        currentNowPlayingIndex: 0,
-        movieWidth: 300,
-        popularImages: [],
-        currentPopularIndex: 0,
+
+    <!-- Sección 2 -->
+    <div class="popular-movies-section">
+      <h2>Películas Populares</h2>
+      <div class="now-playing-slider">
+        <button @click="prevPopularMovie" class="nav-button left">❮</button>
+        <div class="movie-container">
+          <div class="movies-wrapper" :style="{ transform: `translateX(-${currentPopularIndex * movieWidth}px)` }">
+            <router-link
+              v-for="(movie, index) in popularImages"
+              :key="index"
+              :to="`/movie/${movie.id}`"
+            >
+              <img
+                :src="movie.poster_path"
+                alt="Película Popular"
+                class="movie-image"
+              />
+              <p>{{ movie.title }}</p>
+            </router-link>
+          </div>
+        </div>
+        <button @click="nextPopularMovie" class="nav-button right">❯</button>
+      </div>
+    </div>
+
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Home',
+  data() {
+    return {
+      images: [],  
+      currentImage: 0,
+      interval: null,
+      nowPlayingImages: [],
+      currentNowPlayingIndex: 0,
+      movieWidth: 300,
+      popularImages: [],
+      currentPopularIndex: 0,
+    };
+  },
+  mounted() {
+    this.fetchImages(); 
+    this.fetchNowPlayingImages();
+    this.fetchPopularImages();
+  },
+  beforeDestroy() {
+    clearInterval(this.interval);
+  },
+  methods: {
+    async fetchImages() {
+      const options = {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          Authorization: 'Bearer TU_TOKEN'
+        }
       };
+
+      try {
+        const response = await fetch('https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc', options);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        this.images = data.results.map(movie => `https://image.tmdb.org/t/p/original${movie.poster_path}`);
+        this.startImageSlider();
+      } catch (err) {
+        console.error('Error fetching images:', err);
+      }
     },
-    mounted() {
-      this.fetchImages(); 
-      this.fetchNowPlayingImages();
-      this.fetchPopularImages();
+    async fetchNowPlayingImages() {
+      const options = {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Mzg4NTEzMjQ2ZDlhMGU0MmM0N2M1M2NkOGNlOTlkZiIsIm5iZiI6MTcyNzUxNTY4MC4zMDc3NjYsInN1YiI6IjY2ZjJmNjk3ZmMwMDk4MzkxNDhkOTA3YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.b0xQ3D8ep0nGLUUZuUXA_SS4Kmb4ZVcIl-YWqPkJZz4'
+        }
+      };
+
+      try {
+        const response = await fetch('https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1', options);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        this.nowPlayingImages = data.results.map(movie => ({
+          id: movie.id,
+          poster_path: `https://image.tmdb.org/t/p/original${movie.poster_path}`,
+          title: movie.title
+        }));
+      } catch (err) {
+        console.error('Error fetching now playing images:', err);
+      }
     },
-    beforeDestroy() {
+    nextMovie() {
+      if (this.currentNowPlayingIndex < this.nowPlayingImages.length - 1) {
+        this.currentNowPlayingIndex++;
+      }
+    },
+    prevMovie() {
+      if (this.currentNowPlayingIndex > 0) {
+        this.currentNowPlayingIndex--;
+      }
+    },
+    async fetchPopularImages() {
+      const options = {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Mzg4NTEzMjQ2ZDlhMGU0MmM0N2M1M2NkOGNlOTlkZiIsIm5iZiI6MTcyNzUxNTY4MC4zMDc3NjYsInN1YiI6IjY2ZjJmNjk3ZmMwMDk4MzkxNDhkOTA3YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.b0xQ3D8ep0nGLUUZuUXA_SS4Kmb4ZVcIl-YWqPkJZz4'
+        }
+      };
+
+      try {
+        const response = await fetch('https://api.themoviedb.org/3/movie/popular?language=en-US&page=1', options);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        this.popularImages = data.results.map(movie => ({
+          id: movie.id,
+          poster_path: `https://image.tmdb.org/t/p/original${movie.poster_path}`,
+          title: movie.title
+        }));
+      } catch (err) {
+        console.error('Error fetching popular images:', err);
+      }
+    },
+    nextPopularMovie() {
+      if (this.currentPopularIndex < this.popularImages.length - 1) {
+        this.currentPopularIndex++;
+      }
+    },
+    prevPopularMovie() {
+      if (this.currentPopularIndex > 0) {
+        this.currentPopularIndex--;
+      }
+    },
+    startImageSlider() {
+      this.interval = setInterval(() => {
+        this.currentImage = (this.currentImage + 1) % this.images.length;
+      }, 3000);
+    },
+    pauseSlider() {
       clearInterval(this.interval);
     },
-    methods: {
-      async fetchImages() {
-        const options = {
-          method: 'GET',
-          headers: {
-            accept: 'application/json',
-            Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Mzg4NTEzMjQ2ZDlhMGU0MmM0N2M1M2NkOGNlOTlkZiIsIm5iZiI6MTcyNzUxNTY4MC4zMDc3NjYsInN1YiI6IjY2ZjJmNjk3ZmMwMDk4MzkxNDhkOTA3YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.b0xQ3D8ep0nGLUUZuUXA_SS4Kmb4ZVcIl-YWqPkJZz4'
-          }
-        };
-  
-        try {
-          const response = await fetch('https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc', options);
-          
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-  
-          const data = await response.json();
-          this.images = data.results.map(movie => `https://image.tmdb.org/t/p/original${movie.poster_path}`);
-          this.startImageSlider();
-        } catch (err) {
-          console.error('Error fetching images:', err);
-        }
-      },
-      async fetchNowPlayingImages() {
-        const options = {
-          method: 'GET',
-          headers: {
-            accept: 'application/json',
-            Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Mzg4NTEzMjQ2ZDlhMGU0MmM0N2M1M2NkOGNlOTlkZiIsIm5iZiI6MTcyNzUxNTY4MC4zMDc3NjYsInN1YiI6IjY2ZjJmNjk3ZmMwMDk4MzkxNDhkOTA3YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.b0xQ3D8ep0nGLUUZuUXA_SS4Kmb4ZVcIl-YWqPkJZz4'
-          }
-        };
-  
-        try {
-          const response = await fetch('https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1', options);
-          
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-  
-          const data = await response.json();
-          this.nowPlayingImages = data.results.map(movie => `https://image.tmdb.org/t/p/original${movie.poster_path}`);
-        } catch (err) {
-          console.error('Error fetching now playing images:', err);
-        }
-      },
-      nextMovie() {
-        if (this.currentNowPlayingIndex < this.nowPlayingImages.length - 1) {
-          this.currentNowPlayingIndex++;
-        }
-      },
-      prevMovie() {
-        if (this.currentNowPlayingIndex > 0) {
-          this.currentNowPlayingIndex--;
-        }
-      },
-      async fetchPopularImages() {
-            const options = {
-            method: 'GET',
-            headers: {
-                accept: 'application/json',
-                Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Mzg4NTEzMjQ2ZDlhMGU0MmM0N2M1M2NkOGNlOTlkZiIsIm5iZiI6MTcyNzUxNTY4MC4zMDc3NjYsInN1YiI6IjY2ZjJmNjk3ZmMwMDk4MzkxNDhkOTA3YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.b0xQ3D8ep0nGLUUZuUXA_SS4Kmb4ZVcIl-YWqPkJZz4'
-            }
-            };
-
-            try {
-            const response = await fetch('https://api.themoviedb.org/3/movie/popular?language=en-US&page=1', options);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            this.popularImages = data.results.map(movie => `https://image.tmdb.org/t/p/original${movie.poster_path}`);
-            } catch (err) {
-            console.error('Error fetching popular images:', err);
-            }
-        },
-        nextPopularMovie() {
-            if (this.currentPopularIndex < this.popularImages.length - 1) {
-            this.currentPopularIndex++;
-            }
-        },
-        prevPopularMovie() {
-            if (this.currentPopularIndex > 0) {
-            this.currentPopularIndex--;
-            }
-        },
-      startImageSlider() {
-        this.interval = setInterval(() => {
-          this.currentImage = (this.currentImage + 1) % this.images.length;
-        }, 3000);
-      },
-      pauseSlider() {
-        clearInterval(this.interval);
-      },
-      resumeSlider() {
-        this.startImageSlider();
-      },
+    resumeSlider() {
+      this.startImageSlider();
     },
-  };
-  </script>
+  },
+};
+</script>
+
   
   <style scoped>
   .nav {

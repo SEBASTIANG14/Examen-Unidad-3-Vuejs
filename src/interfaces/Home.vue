@@ -25,6 +25,7 @@
               v-for="(movie, index) in nowPlayingImages"
               :key="index"
               :to="`/movie/${movie.id}`"
+              class="custom-link"
             >
               <img
                 :src="movie.poster_path"
@@ -50,6 +51,7 @@
               v-for="(movie, index) in popularImages"
               :key="index"
               :to="`/movie/${movie.id}`"
+              class="custom-link"
             >
               <img
                 :src="movie.poster_path"
@@ -61,6 +63,57 @@
           </div>
         </div>
         <button @click="nextPopularMovie" class="nav-button right">❯</button>
+      </div>
+    </div>
+
+    <div class="top-rated-movies-section">
+      <h2>Películas Mejor Valoradas</h2>
+      <div class="now-playing-slider">
+        <button @click="prevTopRatedMovie" class="nav-button left">❮</button>
+        <div class="movie-container">
+          <div class="movies-wrapper" :style="{ transform: `translateX(-${currentTopRatedIndex * movieWidth}px)` }">
+            <router-link
+              v-for="(movie, index) in topRatedImages"
+              :key="index"
+              :to="`/movie/${movie.id}`"
+              class="custom-link"
+            >
+              <img
+                :src="movie.poster_path"
+                alt="Película Mejor Valorada"
+                class="movie-image"
+              />
+              <p>{{ movie.title }}</p>
+            </router-link>
+          </div>
+        </div>
+        <button @click="nextTopRatedMovie" class="nav-button right">❯</button>
+      </div>
+    </div>
+
+    <!-- Sección 4: Próximamente -->
+    <div class="upcoming-movies-section">
+      <h2>Próximamente en Cines</h2>
+      <div class="now-playing-slider">
+        <button @click="prevUpcomingMovie" class="nav-button left">❮</button>
+        <div class="movie-container">
+          <div class="movies-wrapper" :style="{ transform: `translateX(-${currentUpcomingIndex * movieWidth}px)` }">
+            <router-link
+              v-for="(movie, index) in upcomingImages"
+              :key="index"
+              :to="`/movie/${movie.id}`"
+              class="custom-link"
+            >
+              <img
+                :src="movie.poster_path"
+                alt="Próximamente en Cines"
+                class="movie-image"
+              />
+              <p>{{ movie.title }}</p>
+            </router-link>
+          </div>
+        </div>
+        <button @click="nextUpcomingMovie" class="nav-button right">❯</button>
       </div>
     </div>
 
@@ -78,14 +131,23 @@ export default {
       nowPlayingImages: [],
       currentNowPlayingIndex: 0,
       movieWidth: 300,
+
       popularImages: [],
       currentPopularIndex: 0,
+
+      topRatedImages: [],
+      currentTopRatedIndex: 0,
+
+      upcomingImages: [],
+      currentUpcomingIndex: 0,
     };
   },
   mounted() {
     this.fetchImages(); 
     this.fetchNowPlayingImages();
     this.fetchPopularImages();
+    this.fetchTopRatedImages();
+    this.fetchUpcomingImages();
   },
   beforeDestroy() {
     clearInterval(this.interval);
@@ -96,7 +158,7 @@ export default {
         method: 'GET',
         headers: {
           accept: 'application/json',
-          Authorization: 'Bearer TU_TOKEN'
+          Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Mzg4NTEzMjQ2ZDlhMGU0MmM0N2M1M2NkOGNlOTlkZiIsIm5iZiI6MTcyNzUxNTY4MC4zMDc3NjYsInN1YiI6IjY2ZjJmNjk3ZmMwMDk4MzkxNDhkOTA3YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.b0xQ3D8ep0nGLUUZuUXA_SS4Kmb4ZVcIl-YWqPkJZz4'
         }
       };
 
@@ -186,6 +248,79 @@ export default {
         this.currentPopularIndex--;
       }
     },
+    async fetchTopRatedImages() {
+      const options = {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Mzg4NTEzMjQ2ZDlhMGU0MmM0N2M1M2NkOGNlOTlkZiIsIm5iZiI6MTcyNzUxNTY4MC4zMDc3NjYsInN1YiI6IjY2ZjJmNjk3ZmMwMDk4MzkxNDhkOTA3YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.b0xQ3D8ep0nGLUUZuUXA_SS4Kmb4ZVcIl-YWqPkJZz4'
+        }
+      };
+
+      try {
+        const response = await fetch('https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1', options);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        this.topRatedImages = data.results.map(movie => ({
+          id: movie.id,
+          poster_path: `https://image.tmdb.org/t/p/original${movie.poster_path}`,
+          title: movie.title
+        }));
+      } catch (err) {
+        console.error('Error fetching top rated images:', err);
+      }
+    },
+    nextTopRatedMovie() {
+      if (this.currentTopRatedIndex < this.topRatedImages.length - 1) {
+        this.currentTopRatedIndex++;
+      }
+    },
+    prevTopRatedMovie() {
+      if (this.currentTopRatedIndex > 0) {
+        this.currentTopRatedIndex--;
+      }
+    },
+    async fetchUpcomingImages() {
+      const options = {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Mzg4NTEzMjQ2ZDlhMGU0MmM0N2M1M2NkOGNlOTlkZiIsIm5iZiI6MTcyNzUxNTY4MC4zMDc3NjYsInN1YiI6IjY2ZjJmNjk3ZmMwMDk4MzkxNDhkOTA3YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.b0xQ3D8ep0nGLUUZuUXA_SS4Kmb4ZVcIl-YWqPkJZz4'
+        }
+      };
+
+      try {
+        const response = await fetch('https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1', options);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        this.upcomingImages = data.results.map(movie => ({
+          id: movie.id,
+          poster_path: `https://image.tmdb.org/t/p/original${movie.poster_path}`,
+          title: movie.title
+        }));
+      } catch (err) {
+        console.error('Error fetching upcoming images:', err);
+      }
+    },
+
+    nextUpcomingMovie() {
+      if (this.currentUpcomingIndex < this.upcomingImages.length - 1) {
+        this.currentUpcomingIndex++;
+      }
+    },
+    prevUpcomingMovie() {
+      if (this.currentUpcomingIndex > 0) {
+        this.currentUpcomingIndex--;
+      }
+    },
     startImageSlider() {
       this.interval = setInterval(() => {
         this.currentImage = (this.currentImage + 1) % this.images.length;
@@ -272,6 +407,7 @@ export default {
   }
   
   .overlay-input {
+    display: block;
     border: none;
     outline: none;
     background: none;
@@ -281,7 +417,7 @@ export default {
     width: 400px;
   }
   
-  .now-playing-section {
+  .now-playing-section .popular-movies-section{
     margin-top: 20px;
     text-align: center;
   }
@@ -306,6 +442,7 @@ export default {
     width: 200px; 
     margin: 0 5px;
     border-radius: 10px;
+    
   }
   
   .nav-button {
@@ -321,6 +458,22 @@ export default {
   
   .nav-button:hover {
     background-color: rgba(255, 255, 255, 1);
+  }
+
+  p{
+    text-align: center;
+    color: #000000;
+  }
+
+  .custom-link {
+    text-decoration: none;
+    color: #3498db;
+    font-weight: bold;
+  }
+
+  .custom-link:hover {
+    color: #ff9900;
+    text-decoration: underline;
   }
 </style>
   

@@ -16,7 +16,7 @@
 
     <!-- Seccion 1 -->
     <div class="now-playing-section">
-      <h2>Películas en Cartelera</h2>
+      <h2>Tendecias</h2>
       <div class="now-playing-slider">
         <button @click="prevMovie" class="nav-button left">❮</button>
         <div class="movie-container">
@@ -42,7 +42,7 @@
 
     <!-- Sección 2 -->
     <div class="popular-movies-section">
-      <h2>Películas Populares</h2>
+      <h2>Populares</h2>
       <div class="now-playing-slider">
         <button @click="prevPopularMovie" class="nav-button left">❮</button>
         <div class="movie-container">
@@ -93,7 +93,7 @@
 
     <!-- Sección 4: Próximamente -->
     <div class="upcoming-movies-section">
-      <h2>Próximamente en Cines</h2>
+      <h2>Series o tv</h2>
       <div class="now-playing-slider">
         <button @click="prevUpcomingMovie" class="nav-button left">❮</button>
         <div class="movie-container">
@@ -186,7 +186,7 @@ export default {
       };
 
       try {
-        const response = await fetch('https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1', options);
+        const response = await fetch('https://api.themoviedb.org/3/trending/movie/day?language=en-US', options);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -294,7 +294,7 @@ export default {
       };
 
       try {
-        const response = await fetch('https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1', options);
+        const response = await fetch('https://api.themoviedb.org/3/tv/popular?language=en-US&page=1', options);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

@@ -1,123 +1,123 @@
 <template>
-  <div>
-    <div class="nav">
-      <h1>Peliculas algo mal <i class="bi bi-fire"></i></h1>
-      <router-link class="login-link" to="/login">Iniciar Sesión</router-link>
-    </div>
-    
-    <div class="image-slider" @mouseover="pauseSlider" @mouseleave="resumeSlider">
-      <img v-if="images.length" :src="images[currentImage]" alt="Imagen Deslizante" />
-      <p v-else>Cargando imágenes...</p>
-      <div class="input-container">
-        <i class="bi bi-search"></i>
-        <input type="text" class="overlay-input" placeholder="Buscar, Serie, Pelicula o persona...">
-      </div>
-    </div>
-
-    <!-- Seccion 1 -->
-    <div class="now-playing-section">
-      <h2>Tendecias</h2>
-      <div class="now-playing-slider">
-        <button @click="prevMovie" class="nav-button left">❮</button>
-        <div class="movie-container">
-          <div class="movies-wrapper" :style="{ transform: `translateX(-${currentNowPlayingIndex * movieWidth}px)` }">
-            <router-link
-              v-for="(movie, index) in nowPlayingImages"
-              :key="index"
-              :to="`/movie/${movie.id}`"
-              class="custom-link"
-            >
-              <img
-                :src="movie.poster_path"
-                alt="Now Playing Movie"
-                class="movie-image"
-              />
-              <p>{{ movie.title }}</p>
-            </router-link>
+  <!-- Sección 1: Tendencias -->
+<div class="now-playing-section">
+  <h2>Tendencias</h2>
+  <div class="now-playing-slider">
+    <button @click="prevMovie" class="nav-button left">❮</button>
+    <div class="movie-container">
+      <div class="movies-wrapper" :style="{ transform: `translateX(-${currentNowPlayingIndex * movieWidth}px)` }">
+        <router-link
+          v-for="(movie, index) in nowPlayingImages"
+          :key="index"
+          :to="`/movie/${movie.id}`"
+          class="custom-link"
+        >
+          <img
+            :src="movie.poster_path"
+            alt="Now Playing Movie"
+            class="movie-image"
+          />
+          <p>{{ movie.title }}</p>
+          <div class="progreso-trans">
+            <div class="progreso-fill" :style="{ width: `${movie.vote_average * 10}%` }"></div>
           </div>
-        </div>
-        <button @click="nextMovie" class="nav-button right">❯</button>
+          <p class="rating">{{ (movie.vote_average * 10).toFixed(0) }} <i class="bi bi-chat-heart-fill"></i></p>
+        </router-link>
       </div>
     </div>
-
-    <!-- Sección 2 -->
-    <div class="popular-movies-section">
-      <h2>Populares</h2>
-      <div class="now-playing-slider">
-        <button @click="prevPopularMovie" class="nav-button left">❮</button>
-        <div class="movie-container">
-          <div class="movies-wrapper" :style="{ transform: `translateX(-${currentPopularIndex * movieWidth}px)` }">
-            <router-link
-              v-for="(movie, index) in popularImages"
-              :key="index"
-              :to="`/movie/${movie.id}`"
-              class="custom-link"
-            >
-              <img
-                :src="movie.poster_path"
-                alt="Película Popular"
-                class="movie-image"
-              />
-              <p>{{ movie.title }}</p>
-            </router-link>
-          </div>
-        </div>
-        <button @click="nextPopularMovie" class="nav-button right">❯</button>
-      </div>
-    </div>
-
-    <div class="top-rated-movies-section">
-      <h2>Películas Mejor Valoradas</h2>
-      <div class="now-playing-slider">
-        <button @click="prevTopRatedMovie" class="nav-button left">❮</button>
-        <div class="movie-container">
-          <div class="movies-wrapper" :style="{ transform: `translateX(-${currentTopRatedIndex * movieWidth}px)` }">
-            <router-link
-              v-for="(movie, index) in topRatedImages"
-              :key="index"
-              :to="`/movie/${movie.id}`"
-              class="custom-link"
-            >
-              <img
-                :src="movie.poster_path"
-                alt="Película Mejor Valorada"
-                class="movie-image"
-              />
-              <p>{{ movie.title }}</p>
-            </router-link>
-          </div>
-        </div>
-        <button @click="nextTopRatedMovie" class="nav-button right">❯</button>
-      </div>
-    </div>
-
-    <!-- Sección 4: Próximamente -->
-    <div class="upcoming-movies-section">
-      <h2>Series o tv</h2>
-      <div class="now-playing-slider">
-        <button @click="prevUpcomingMovie" class="nav-button left">❮</button>
-        <div class="movie-container">
-          <div class="movies-wrapper" :style="{ transform: `translateX(-${currentUpcomingIndex * movieWidth}px)` }">
-            <router-link
-              v-for="(movie, index) in upcomingImages"
-              :key="index"
-              :to="`/movie/${movie.id}`"
-              class="custom-link"
-            >
-              <img
-                :src="movie.poster_path"
-                alt="Próximamente en Cines"
-                class="movie-image"
-              />
-              <p>{{ movie.title }}</p>
-            </router-link>
-          </div>
-        </div>
-        <button @click="nextUpcomingMovie" class="nav-button right">❯</button>
-      </div>
-    </div>
-
+    <button @click="nextMovie" class="nav-button right">❯</button>
   </div>
+</div>
+
+<!-- Sección 2: Películas Populares -->
+<div class="popular-movies-section">
+  <h2>Populares</h2>
+  <div class="now-playing-slider">
+    <button @click="prevPopularMovie" class="nav-button left">❮</button>
+    <div class="movie-container">
+      <div class="movies-wrapper" :style="{ transform: `translateX(-${currentPopularIndex * movieWidth}px)` }">
+        <router-link
+          v-for="(movie, index) in popularImages"
+          :key="index"
+          :to="`/movie/${movie.id}`"
+          class="custom-link"
+        >
+          <img
+            :src="movie.poster_path"
+            alt="Película Popular"
+            class="movie-image"
+          />
+          <p>{{ movie.title }}</p>
+          <div class="progreso-trans">
+            <div class="progreso-fill" :style="{ width: `${movie.vote_average * 10}%` }"></div>
+          </div>
+          <p class="rating">{{ (movie.vote_average * 10).toFixed(0) }} <i class="bi bi-chat-heart-fill"></i></p> <!-- Aquí se agrega la calificación -->
+        </router-link>
+      </div>
+    </div>
+    <button @click="nextPopularMovie" class="nav-button right">❯</button>
+  </div>
+</div>
+
+<!-- Sección 3: Películas Mejor Valoradas -->
+<div class="top-rated-movies-section">
+  <h2>Películas Mejor Valoradas</h2>
+  <div class="now-playing-slider">
+    <button @click="prevTopRatedMovie" class="nav-button left">❮</button>
+    <div class="movie-container">
+      <div class="movies-wrapper" :style="{ transform: `translateX(-${currentTopRatedIndex * movieWidth}px)` }">
+        <router-link
+          v-for="(movie, index) in topRatedImages"
+          :key="index"
+          :to="`/movie/${movie.id}`"
+          class="custom-link"
+        >
+          <img
+            :src="movie.poster_path"
+            alt="Película Mejor Valorada"
+            class="movie-image"
+          />
+          <p>{{ movie.title }}</p>
+          <div class="progreso-trans">
+            <div class="progreso-fill" :style="{ width: `${movie.vote_average * 10}%` }"></div>
+          </div>
+          <p class="rating">{{ (movie.vote_average * 10).toFixed(0) }} <i class="bi bi-chat-heart-fill"></i></p>
+        </router-link>
+      </div>
+    </div>
+    <button @click="nextTopRatedMovie" class="nav-button right">❯</button>
+  </div>
+</div>
+
+<!-- Sección 4: Series o TV -->
+<div class="upcoming-movies-section">
+  <h2>Series o TV</h2>
+  <div class="now-playing-slider">
+    <button @click="prevUpcomingMovie" class="nav-button left">❮</button>
+    <div class="movie-container">
+      <div class="movies-wrapper" :style="{ transform: `translateX(-${currentUpcomingIndex * movieWidth}px)` }">
+        <router-link
+          v-for="(movie, index) in upcomingImages"
+          :key="index"
+          :to="`/movie/${movie.id}`"
+          class="custom-link"
+        >
+          <img
+            :src="movie.poster_path"
+            alt="Próximamente en Cines"
+            class="movie-image"
+          />
+          <p>{{ movie.title }}</p>
+          <div class="progreso-trans">
+            <div class="progreso-fill" :style="{ width: `${movie.vote_average * 10}%` }"></div>
+          </div>
+          <p class="rating">{{ (movie.vote_average * 10).toFixed(0) }} <i class="bi bi-chat-heart-fill"></i></p> <!-- Aquí se agrega la calificación -->
+        </router-link>
+      </div>
+    </div>
+    <button @click="nextUpcomingMovie" class="nav-button right">❯</button>
+  </div>
+</div>
 </template>
 
 <script>
@@ -196,7 +196,8 @@ export default {
         this.nowPlayingImages = data.results.map(movie => ({
           id: movie.id,
           poster_path: `https://image.tmdb.org/t/p/original${movie.poster_path}`,
-          title: movie.title
+          title: movie.title,
+          vote_average:movie.vote_average
         }));
       } catch (err) {
         console.error('Error fetching now playing images:', err);
@@ -232,7 +233,8 @@ export default {
         this.popularImages = data.results.map(movie => ({
           id: movie.id,
           poster_path: `https://image.tmdb.org/t/p/original${movie.poster_path}`,
-          title: movie.title
+          title: movie.title,
+          vote_average:movie.vote_average
         }));
       } catch (err) {
         console.error('Error fetching popular images:', err);
@@ -268,7 +270,8 @@ export default {
         this.topRatedImages = data.results.map(movie => ({
           id: movie.id,
           poster_path: `https://image.tmdb.org/t/p/original${movie.poster_path}`,
-          title: movie.title
+          title: movie.title,
+          vote_average:movie.vote_average
         }));
       } catch (err) {
         console.error('Error fetching top rated images:', err);
@@ -304,7 +307,8 @@ export default {
         this.upcomingImages = data.results.map(movie => ({
           id: movie.id,
           poster_path: `https://image.tmdb.org/t/p/original${movie.poster_path}`,
-          title: movie.title
+          title: movie.title,
+          vote_average:movie.vote_average
         }));
       } catch (err) {
         console.error('Error fetching upcoming images:', err);
@@ -475,5 +479,19 @@ export default {
     color: #ff9900;
     text-decoration: underline;
   }
+
+  .progreso-trans {
+  width: 200px;
+  height: 20px;
+  background-color: #e0e0e0; /* Color de fondo de la barra */
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progreso-fill {
+  height: 100%;
+  background-color: #ff0000; /* Color de la parte llena de la barra */
+  width: 75%; /* Ajusta este valor para cambiar el porcentaje de llenado */
+}
 </style>
   

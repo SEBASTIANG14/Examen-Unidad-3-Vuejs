@@ -1,4 +1,19 @@
 <template>
+  <div>
+    <div class="nav">
+      <h1>Peliculas algo mal <i class="bi bi-fire"></i></h1>
+      <router-link class="login-link" to="/login">Iniciar Sesión</router-link>
+    </div>
+
+    <div class="image-slider" @mouseover="pauseSlider" @mouseleave="resumeSlider">
+      <img v-if="images.length" :src="images[currentImage]" alt="Imagen Deslizante" />
+      <p v-else>Cargando imágenes...</p>
+      <div class="input-container">
+        <i class="bi bi-search"></i>
+        <input type="text" class="overlay-input" placeholder="Buscar, Serie, Pelicula o persona...">
+      </div>
+    </div>
+  </div>
   <!-- Sección 1: Tendencias -->
 <div class="now-playing-section">
   <h2>Tendencias</h2>

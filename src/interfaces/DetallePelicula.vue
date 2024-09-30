@@ -29,11 +29,11 @@
       <h2>Actores Principales</h2>
       <div class="cast-list">
         <div v-for="actor in movie.credits.cast.slice(0, 6)" :key="actor.id" class="cast-card">
-          <div>
+          <router-link class="artist-class" :to="'/artista/' + actor.id">
             <img :src="'https://image.tmdb.org/t/p/w185' + actor.profile_path" :alt="actor.name" v-if="actor.profile_path" />
             <p><strong>{{ actor.name }}</strong></p>
             <p>{{ actor.character }} ({{ actor.known_for_department }})</p>
-          </div>
+          </router-link >
         </div>
       </div>
     </div>
@@ -113,6 +113,14 @@ h1 {
   margin-bottom: 0.5rem;
 }
 
+.artist-class {
+  text-decoration: none;
+  color: rgb(255, 255, 255); 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+}
+
 .genres {
   font-size: 1.2rem;
   color: #ddd;
@@ -168,4 +176,5 @@ h1 {
   color: #ffffff;
   font-weight: bold;
 }
+
 </style>

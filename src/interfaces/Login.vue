@@ -52,13 +52,13 @@ export default {
     const password = ref('');
     const acceso = ref(false);
     const errorAcceso = ref(false);
-    const loading = ref(false); // Nueva variable para manejar el estado de carga
-    const errorMessage = ref(''); // Mensaje de error dinámico
+    const loading = ref(false);
+    const errorMessage = ref(''); 
       
     console.log('Login component loaded');
     
     async function onsubmit() {
-      loading.value = true; // Activa el estado de carga
+      loading.value = true; 
       try {
         const tokenResponse = await fetch('https://api.themoviedb.org/3/authentication/token/new?api_key=5388513246d9a0e42c47c53cd8ce99df');
         if (!tokenResponse.ok) throw new Error('Error al obtener el token');
@@ -77,9 +77,9 @@ export default {
         });
 
         if (!loginResponse.ok) {
-          errorMessage.value = 'Usuario o contraseña incorrectos'; // Mensaje de error específico
+          errorMessage.value = 'Usuario o contraseña incorrectos';
           errorAcceso.value = true;
-          loading.value = false; // Desactiva el estado de carga
+          loading.value = false; 
           return;
         }
 
@@ -98,10 +98,10 @@ export default {
         if (sessionData.success) {
           acceso.value = true;
           errorAcceso.value = false;
-          // Guarda los datos del usuario en localStorage
+          
           localStorage.setItem('user', JSON.stringify({ name: username.value, session_id: sessionData.session_id }));
-          username.value = ''; // Limpiar campo de usuario
-          password.value = ''; // Limpiar campo de contraseña
+          username.value = ''; 
+          password.value = ''; 
           router.push({ name: 'Home' });
         } else {
           throw new Error('Error al crear la sesión');
@@ -111,7 +111,7 @@ export default {
         errorAcceso.value = true;
         errorMessage.value = error.message || 'Error inesperado';
       } finally {
-        loading.value = false; // Asegúrate de desactivar el estado de carga
+        loading.value = false;
       }
     }
 
@@ -136,7 +136,7 @@ body {
 .Login {
   background-color: #ffffff;
   margin: 10% auto;
-  padding: 20px; /* Aumentado para mejor apariencia */
+  padding: 20px; 
   border: 2px solid #000000;
   border-radius: 20px;
   width: calc(100% - 30px);
@@ -190,7 +190,7 @@ input {
   width: 100%;
   border: none;
   border-bottom: 2px solid rgba(173, 173, 173, 0.5);
-  margin: 10px 0px; /* Añadido 'px' para que funcione correctamente */
+  margin: 10px 0px;
   padding: 10px 15px;
   box-sizing: border-box;
   font-weight: 400;
@@ -199,7 +199,7 @@ input {
 
 input:focus {
   border: none;
-  border-bottom: 2px solid rgb(0, 0, 0); /* Cambiado a 2px para consistencia */
+  border-bottom: 2px solid rgb(0, 0, 0);
   color: darkgray;
 }
 
@@ -209,14 +209,14 @@ input:focus {
 
 .input-container i {
   position: absolute;
-  left: 10px; /* Ajusta según sea necesario */
-  top: 50%; /* Centra verticalmente */
+  left: 10px;
+  top: 50%;
   transform: translateY(-50%);
-  color: gray; /* Cambia el color del ícono si es necesario */
+  color: gray
 }
 
 .input-container input {
-  padding-left: 35px; /* Aumentado para mejor espacio con el ícono */
+  padding-left: 35px;
 }
 
 .error-message {

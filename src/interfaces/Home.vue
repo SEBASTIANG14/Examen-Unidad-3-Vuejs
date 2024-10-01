@@ -595,10 +595,10 @@ export default {
 
   .dropdown-menu {
     position: absolute;
-    top: 100%;
+    top: 25px;
     right: 0;
-    background-color: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: rgb(216, 216, 216);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
     border-radius: 5px;
     z-index: 1000;
     width: 150px;
@@ -611,15 +611,16 @@ export default {
   }
 
   .dropdown-menu li {
-    padding: 10px;
-    text-align: left;
+    padding: 5px;
+    text-align: center;
     cursor: pointer;
-    border-bottom: 1px solid #ddd;
+    border-radius: 9px;
     transition: background-color 0.3s;
   }
 
   .dropdown-menu li:hover {
-    background-color: #f0f0f0;
+    background-color: #ff0000;
+    border-radius: 9px;
   }
 
   .dropdown-menu li:last-child {

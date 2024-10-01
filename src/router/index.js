@@ -3,7 +3,8 @@ import Home from '../interfaces/Home.vue';
 import Login from '../interfaces/Login.vue';
 import DetallePelicula from '../interfaces/DetallePelicula.vue';
 import DetalleArtista from '@/interfaces/DetalleArtista.vue';
-import DetalleSerie from '@/interfaces/DetalleSerie.vue'; 
+import DetalleSerie from '@/interfaces/DetalleSerie.vue';
+import DetalleCategoria from '@/interfaces/DetalleCategoria.vue'; 
 
 const routes = [
   {
@@ -34,6 +35,13 @@ const routes = [
     path: '/serie/:id',
     name: 'DetalleSerie',
     component: DetalleSerie,
+  },
+
+  //Ruta para obtener las peliculas de cada categoria
+  {
+    path: '/categoria/:category_id',
+    name: 'DetalleCategoria',
+    component: DetalleCategoria
   }
 ];
 

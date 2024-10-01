@@ -8,7 +8,7 @@
       <div class="info">
         <h1>{{ movie.title }} <span>({{ movie.release_date.split('-')[0] }})</span></h1>
         <p class="genres">
-          <router-link v-for="(genre, index) in movie.genres" :key="genre.id" class="genre-link">{{ genre.name }}<span v-if="index < movie.genres.length - 1">, </span></router-link>
+          <router-link v-for="(genre, index) in movie.genres" :key="genre.id" :to="'/categoria/' + genre.id" class="genre-link">{{ genre.name }}<span v-if="index < movie.genres.length - 1">, </span></router-link>
         </p>
         <p class="release-info">
           {{ movie.release_date }} ({{ movie.production_countries[0]?.iso_3166_1 || 'N/A' }}) • {{ movie.runtime }}m

@@ -6,7 +6,6 @@
           <img :src="'https://image.tmdb.org/t/p/w500' + series.poster_path" alt="series poster" />
         </div>
         <div class="info">
-          <!-- Cambiamos series.title a series.name -->
           <h1>{{ series.name }} <span>({{ series.first_air_date.split('-')[0] }})</span></h1>
           <p class="genres">
             <router-link v-for="(genre, index) in series.genres" :key="genre.id" class="genre-link">
@@ -20,6 +19,13 @@
             <span>{{ series.vote_average * 10 }}%</span> Puntuación de usuario
           </div>
           <p class="overview">{{ series.overview }}</p>
+  
+          <!-- Información de la temporada actual -->
+          <div v-if="currentSeason" class="current-season">
+            <h2>Temporada Actual: {{ currentSeason.name }}</h2>
+            <p>{{ currentSeason.air_date }} - {{ currentSeason.episode_count }} episodios</p>
+            <img :src="'https://image.tmdb.org/t/p/w300' + currentSeason.poster_path" alt="Poster de la temporada" v-if="currentSeason.poster_path" />
+          </div>
           
           <!-- Validar la existencia de 'credits' -->
           <div class="crew" v-if="series.credits?.crew && series.credits.crew.length">
@@ -32,6 +38,8 @@
           </div>
         </div>
       </div>
+  
+      <!-- Lista de actores principales -->
       <div v-if="series.credits?.cast && series.credits.cast.length" class="cast-section">
         <h2>Actores Principales</h2>
         <div class="cast-list">
@@ -45,22 +53,25 @@
         </div>
       </div>
     </div>
+  
     <div v-else>
       <p>Cargando detalles...</p>
     </div>
+  
     <Footer :userName="userName" />
   </template>
   
   <script>
   import axios from 'axios'; 
   import Navbar from '../components/Navbar.vue';
-  import Footer from '../components/Footer.vue'
+  import Footer from '../components/Footer.vue';
   import '@fortawesome/fontawesome-free/css/all.css';
   
   export default {
     data() {
       return {
         series: null,
+        currentSeason: null,
         userName: 'SEBASTIAN14'
       };
     },
@@ -75,7 +86,11 @@
         try {
           const response = await axios.get(`https://api.themoviedb.org/3/tv/${seriesId}?api_key=${apiKey}&append_to_response=credits`);
           this.series = response.data;
-          console.log(this.series);  
+          console.log(this.series);
+  
+          // Obtener la temporada actual (última temporada en la lista)
+          this.currentSeason = this.series.seasons[this.series.seasons.length - 1];
+          console.log(this.currentSeason);
         } catch (error) {
           console.error('Error al obtener los detalles de la serie:', error);
         }
@@ -88,99 +103,17 @@
   };
   </script>
   
-  
   <style>
-  .series-detail {
-    position: relative;
-    background-size: cover;
-    background-position: center;
-    color: white;
-    padding: 2rem;
-  }
   
-  .overlay {
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    padding: 2rem;
-  }
-  
-  .poster img {
-    border-radius: 8px;
-    max-width: 300px;
-  }
-  
-  .info {
-    margin-left: 2rem;
-    max-width: 700px;
-  }
-  
-  h1 {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .artist-class {
-    text-decoration: none;
-    color: rgb(255, 255, 255); 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-  }
-  
-  .genres {
-    font-size: 1.2rem;
-    color: #ddd;
-  }
-  
-  .release-info, .user-score {
-    margin: 0.5rem 0;
-    font-size: 1rem;
-  }
-  
-  .user-score span {
-    font-weight: bold;
-    color: #73c700;
-  }
-  
-  .overview {
-    margin: 1.5rem 0;
-    font-size: 1.2rem;
-    line-height: 1.5;
-  }
-  
-  .crew p {
-    margin: 0.5rem 0;
-  }
-  
-  .cast-section {
+  .current-season {
     margin-top: 2rem;
+    text-align: left;
   }
   
-  .cast-list {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  
-  .cast-card {
-    width: 150px;
-    text-align: center;
-  }
-  
-  .cast-card img {
+  .current-season img {
     border-radius: 8px;
-    width: 100%;
-    height: auto;
+    max-width: 200px;
+    margin-top: 1rem;
   }
-  
-  .cast-card p {
-    margin: 0.5rem 0;
-  }
-  
-  .genre-link {
-    text-decoration: none;
-    color: #ffffff;
-    font-weight: bold;
-  }
-  
   </style>
+  

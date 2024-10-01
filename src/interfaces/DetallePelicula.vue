@@ -38,6 +38,19 @@
       </div>
     </div>
   </div>
+  <div v-if="keywords.length">
+      <h2>Palabras clave</h2>
+      <div class="keywords-list">
+        <span v-for="keyword in keywords" :key="keyword.id" class="keyword">
+          {{ keyword.name }}
+        </span>
+      </div>
+    </div>
+
+    <div v-if="trailer" class="trailer">
+      <h2>Tráiler</h2>
+      <iframe :src="trailer" width="560" height="315" frameborder="0" allowfullscreen></iframe>
+    </div>
   <div v-else>
     <p>Cargando detalles...</p>
   </div>
@@ -55,11 +68,15 @@ export default {
   data() {
     return {
       movie: null,
-      userName: 'SEBASTIAN14' 
+      userName: 'SEBASTIAN14',
+      keywords: [],
+      trailer: null
     };
   },
   mounted() {
     this.fetchMovieDetails();
+    this.fetchMovieKeywords();
+    this.fetchMovieTrailer();
   },
   methods: {
     async fetchMovieDetails() {
@@ -72,6 +89,30 @@ export default {
         console.log(this.movie);  
       } catch (error) {
         console.error('Error al obtener los detalles de la película:', error);
+      }
+    },
+    async fetchMovieKeywords() {
+      const movieId = this.$route.params.id;
+      const apiKey = '7dbf2be7efbc38c8a5ba78d99ae9f933';
+      try {
+        const response = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}/keywords?api_key=${apiKey}`);
+        this.keywords = response.data.keywords;
+      } catch (error) {
+        console.error('Error al obtener las palabras clave:', error);
+      }
+    },
+    async fetchMovieTrailer() {
+      const movieId = this.$route.params.id;
+      const apiKey = '7dbf2be7efbc38c8a5ba78d99ae9f933';
+      try {
+        const response = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${apiKey}`);
+        const videos = response.data.results;
+        const trailer = videos.find(video => video.type === 'Trailer' && video.site === 'YouTube');
+        if (trailer) {
+          this.trailer = `https://www.youtube.com/embed/${trailer.key}`;
+        }
+      } catch (error) {
+        console.error('Error al obtener el tráiler:', error);
       }
     }
   },
@@ -176,5 +217,22 @@ h1 {
   color: #ffffff;
   font-weight: bold;
 }
+.keywords-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.keyword {
+  background-color: #f0f0f0;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+
+.trailer {
+  margin-top: 20px;
+}
+
 
 </style>

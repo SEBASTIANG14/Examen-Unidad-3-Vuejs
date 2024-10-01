@@ -20,14 +20,16 @@
       </div>
   
       <div class="artist-movies" v-if="knownForMovies.length">
-        <h2>Conocido por</h2>
-        <div class="movies-grid">
-          <div v-for="movie in knownForMovies" :key="movie.id" class="movie-item">
+      <h2>Conocido por</h2>
+      <div class="movies-grid">
+        <div v-for="movie in knownForMovies" :key="movie.id" class="movie-item">
+          <router-link class="movie-known" :to="{ name: 'MovieDetails', params: { id: movie.id } }">
             <img :src="'https://image.tmdb.org/t/p/w154' + movie.poster_path" :alt="movie.title" v-if="movie.poster_path" />
             <p>{{ movie.title }}</p>
-          </div>
+          </router-link>
         </div>
       </div>
+    </div>
     </div>
     <div v-else>
       <p>Cargando detalles del artista...</p>
@@ -164,5 +166,10 @@ export default {
   margin-top: 10px;
   font-size: 0.9rem;
   font-weight: bold;
+}
+
+.movie-known{
+  color:black;
+  text-decoration: none;
 }
 </style>

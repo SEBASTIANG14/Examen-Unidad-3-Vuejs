@@ -10,38 +10,8 @@
         <ul class="nav-links">
           <li><router-link to="/movies">Películas</router-link></li>
           <li><router-link to="/tv-shows">Series de TV</router-link></li>
-          <li><router-link to="/people">Personas</router-link></li>
-          <li><router-link to="/more">Más</router-link></li>
         </ul>
-      </div>
-  
-      <!-- Iconos en la parte derecha -->
-      <div class="navbar-right">
-        <!-- Agregar contenido -->
-        <div class="icon">
-          <i class="fas fa-plus"></i>
-        </div>
-  
-        <!-- Selector de idioma -->
-        <div class="icon">
-          <button>ES</button>
-        </div>
-  
-        <!-- Notificaciones -->
-        <div class="icon">
-          <i class="fas fa-bell"></i>
-        </div>
-  
-        <!-- Perfil de usuario -->
-        <div class="icon profile-icon">
-          <span>S</span>
-        </div>
-  
-        <!-- Buscar -->
-        <div class="icon">
-          <i class="fas fa-search"></i>
-        </div>
-      </div>
+      </div>      
     </nav>
   </template>
   

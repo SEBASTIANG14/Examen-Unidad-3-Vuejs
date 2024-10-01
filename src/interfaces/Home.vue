@@ -129,7 +129,7 @@
           <router-link
             v-for="(movie, index) in upcomingImages"
             :key="index"
-            :to="`/movie/${movie.id}`"
+            :to="`/serie/${movie.id}`"
             class="custom-link"
           >
             <img

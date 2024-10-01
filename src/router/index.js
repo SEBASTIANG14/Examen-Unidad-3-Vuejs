@@ -3,6 +3,7 @@ import Home from '../interfaces/Home.vue';
 import Login from '../interfaces/Login.vue';
 import DetallePelicula from '../interfaces/DetallePelicula.vue';
 import DetalleArtista from '@/interfaces/DetalleArtista.vue';
+import DetalleSerie from '@/interfaces/DetalleSerie.vue'; 
 
 const routes = [
   {
@@ -26,6 +27,13 @@ const routes = [
     name: 'DetalleArtista',
     component: DetalleArtista,
     props: true
+  },
+
+  //rutas para obtener los detalles de una serie
+  {
+    path: '/serie/:id',
+    name: 'DetalleSerie',
+    component: DetalleSerie,
   }
 ];
 

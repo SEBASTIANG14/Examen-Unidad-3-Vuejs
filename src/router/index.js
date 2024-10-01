@@ -5,6 +5,8 @@ import DetallePelicula from '../interfaces/DetallePelicula.vue';
 import DetalleArtista from '@/interfaces/DetalleArtista.vue';
 import DetalleSerie from '@/interfaces/DetalleSerie.vue';
 import DetalleCategoria from '@/interfaces/DetalleCategoria.vue'; 
+import DetallePalabraClave from '@/interfaces/DetallePalabraClave.vue';
+import DetalleTemporada from '@/interfaces/DetalleTemporada.vue';
 
 const routes = [
   {
@@ -42,7 +44,19 @@ const routes = [
     path: '/categoria/:category_id',
     name: 'DetalleCategoria',
     component: DetalleCategoria
+  },
+
+  {
+    path: '/detallepalabraclave/:id',
+    name: 'DetallePalabraClave',
+    component: DetallePalabraClave
+  },
+  {
+    path: '/serie/:seriesId/temporada/:seasonNumber',
+    name: 'SeasonDetail',
+    component: DetalleTemporada
   }
+  
 ];
 
 const router = createRouter({

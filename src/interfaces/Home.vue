@@ -4,7 +4,7 @@
       <h1>Peliculas algo mal <i class="bi bi-fire"></i></h1>
       
       <div class="auth-section">
-        <router-link v-if="!isLoggedIn" class="login-link" to="/login">Iniciar Sesión</router-link>
+        <router-link v-if="!isLoggedIn" class="button is-primary" to="/login">Iniciar Sesión</router-link>
         <div v-else class="user-info">
           <span class="user-name" @click="toggleMenu">
             <i class="bi bi-person-fill"></i> {{ userName }}

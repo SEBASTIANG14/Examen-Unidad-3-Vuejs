@@ -39,13 +39,19 @@
     </div>
   </div>
   <div v-if="keywords.length">
-      <h2>Palabras clave</h2>
-      <div class="keywords-list">
-        <span v-for="keyword in keywords" :key="keyword.id" class="keyword">
-          {{ keyword.name }}
-        </span>
-      </div>
-    </div>
+  <h2>Palabras clave</h2>
+  <div class="keywords-list">
+    <router-link
+      v-for="keyword in keywords"
+      :key="keyword.id"
+      :to="'/detallepalabraclave/' + keyword.id"
+      class="keyword"
+    >
+      {{ keyword.name }}
+    </router-link>
+  </div>
+</div>
+
 
     <div v-if="trailer" class="trailer">
       <h2>Tráiler</h2>

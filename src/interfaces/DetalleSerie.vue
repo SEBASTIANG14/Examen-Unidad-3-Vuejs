@@ -19,15 +19,20 @@
             <span>{{ series.vote_average * 10 }}%</span> Puntuación de usuario
           </div>
           <p class="overview">{{ series.overview }}</p>
-  
-          <!-- Información de la temporada actual -->
-          <div v-if="currentSeason" class="current-season">
-            <h2>Temporada Actual: {{ currentSeason.name }}</h2>
-            <p>{{ currentSeason.air_date }} - {{ currentSeason.episode_count }} episodios</p>
-            <img :src="'https://image.tmdb.org/t/p/w300' + currentSeason.poster_path" alt="Poster de la temporada" v-if="currentSeason.poster_path" />
+    
+          <!-- Información de todas las temporadas -->
+          <div class="seasons-section">
+            <h2>Temporadas</h2>
+            <div v-for="(season, index) in series.seasons" :key="season.id" class="season-card">
+              <router-link :to="'/serie/' + series.id + '/temporada/' + season.season_number">
+                <img :src="'https://image.tmdb.org/t/p/w185' + season.poster_path" alt="Poster de la temporada" v-if="season.poster_path" />
+                <p>{{ season.name }} ({{ season.air_date ? season.air_date.split('-')[0] : 'N/A' }})</p>
+                <p>{{ season.episode_count }} episodios</p>
+              </router-link>
+            </div>
           </div>
-          
-          <!-- Validar la existencia de 'credits' -->
+    
+          <!-- Validar la existencia de credits -->
           <div class="crew" v-if="series.credits?.crew && series.credits.crew.length">
             <p v-if="series.credits.crew[0]">
               <strong>{{ series.credits.crew[0]?.name }}</strong> - {{ series.credits.crew[0]?.job }}
@@ -38,7 +43,22 @@
           </div>
         </div>
       </div>
-  
+    
+      <!-- Lista de palabras clave -->
+      <div v-if="keywords.length">
+        <h2>Palabras clave</h2>
+        <div class="keywords-list">
+          <router-link
+            v-for="keyword in keywords"
+            :key="keyword.id"
+            :to="'/detallepalabraclave/' + keyword.id"
+            class="keyword"
+          >
+            {{ keyword.name }}
+          </router-link>
+        </div>
+      </div>
+    
       <!-- Lista de actores principales -->
       <div v-if="series.credits?.cast && series.credits.cast.length" class="cast-section">
         <h2>Actores Principales</h2>
@@ -61,6 +81,7 @@
     <Footer :userName="userName" />
   </template>
   
+  
   <script>
   import axios from 'axios'; 
   import Navbar from '../components/Navbar.vue';
@@ -72,30 +93,39 @@
       return {
         series: null,
         currentSeason: null,
+        keywords: [],
         userName: 'SEBASTIAN14'
       };
     },
     mounted() {
       this.fetchSeriesDetails();
+      this.fetchSeriesKeywords(); // Llamar a la función para obtener palabras clave
     },
     methods: {
       async fetchSeriesDetails() {
         const seriesId = this.$route.params.id;
-        console.log('Series ID:', seriesId);
         const apiKey = '7dbf2be7efbc38c8a5ba78d99ae9f933';  
         try {
           const response = await axios.get(`https://api.themoviedb.org/3/tv/${seriesId}?api_key=${apiKey}&append_to_response=credits`);
           this.series = response.data;
-          console.log(this.series);
-  
-          // Obtener la temporada actual (última temporada en la lista)
-          this.currentSeason = this.series.seasons[this.series.seasons.length - 1];
-          console.log(this.currentSeason);
+          this.currentSeason = this.series.seasons[this.series.seasons.length - 1]; // Obtener la temporada actual
         } catch (error) {
           console.error('Error al obtener los detalles de la serie:', error);
         }
-      }
+      },
+      async fetchSeriesKeywords() {
+        const seriesId = this.$route.params.id;
+        const apiKey = '7dbf2be7efbc38c8a5ba78d99ae9f933';  
+        try {
+            const response = await axios.get(`https://api.themoviedb.org/3/tv/${seriesId}/keywords?api_key=${apiKey}`);
+            console.log('Series keywords response:', response.data);  // Verifica la respuesta de la API
+            this.keywords = response.data.results || [];  // Ajusta cómo accedes a los keywords
+        } catch (error) {
+            console.error('Error al obtener las palabras clave de la serie:', error);
+        }
+        },
     },
+
     components: {
       Navbar,
       Footer
@@ -104,7 +134,6 @@
   </script>
   
   <style>
-  
   .current-season {
     margin-top: 2rem;
     text-align: left;
@@ -114,6 +143,21 @@
     border-radius: 8px;
     max-width: 200px;
     margin-top: 1rem;
+  }
+  
+  .keywords-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 1rem;
+  }
+  
+  .keyword {
+    background-color: #f0f0f0;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    cursor: pointer; /* Cambia el cursor a pointer para indicar que es clickable */
   }
   </style>
   

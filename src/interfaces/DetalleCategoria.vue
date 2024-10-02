@@ -1,4 +1,23 @@
 <template>
+   <div class="nav">
+    <router-link :to="'/'">
+      <h1>Peliculas algo mal <i class="bi bi-fire"></i></h1>
+    </router-link>
+      <div class="auth-section">
+        <router-link v-if="!isLoggedIn" class="button is-primary" to="/login">Iniciar Sesión</router-link>
+        <div v-else class="user-info">
+          <span class="user-name" @click="toggleMenu">
+            <i class="bi bi-person-fill"></i> {{ userName }}
+            <i class="bi bi-caret-down-fill"></i> <!-- Icono para el menú desplegable -->
+          </span>
+          <div v-if="showMenu" class="dropdown-menu">
+            <ul>
+              <li @click="logout">Cerrar Sesión</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div> 
     <div class="detalle-categoria">
     <h1>Películas o Series de la categoría: {{ genreName }}</h1>
 
@@ -105,6 +124,15 @@ export default {
 }
 </script>
 <style>
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #f4f4f4;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
 .detalle-categoria {
   padding: 20px;
 }

@@ -1,5 +1,23 @@
 <template lang="">
-  <Navbar/>
+  <div class="nav">
+    <router-link :to="'/'">
+      <h1>Peliculas algo mal <i class="bi bi-fire"></i></h1>
+    </router-link>
+      <div class="auth-section">
+        <router-link v-if="!isLoggedIn" class="button is-primary" to="/login">Iniciar Sesión</router-link>
+        <div v-else class="user-info">
+          <span class="user-name" @click="toggleMenu">
+            <i class="bi bi-person-fill"></i> {{ userName }}
+            <i class="bi bi-caret-down-fill"></i> <!-- Icono para el menú desplegable -->
+          </span>
+          <div v-if="showMenu" class="dropdown-menu">
+            <ul>
+              <li @click="logout">Cerrar Sesión</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>    
     <div v-if="movie" :style="{ backgroundImage: 'url(https://image.tmdb.org/t/p/original' + movie.backdrop_path + ')' }" class="movie-detail">
     <div class="overlay">
       <div class="poster">
@@ -131,6 +149,14 @@ export default {
 
 
 <style>
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #f4f4f4;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 .movie-detail {
   position: relative;
   background-size: cover;
@@ -156,6 +182,8 @@ export default {
 }
 
 h1 {
+  color: #3498db;
+  margin: 0;
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
 }

@@ -5,16 +5,14 @@
       <hr>
 
       <div class="auth-section">
-        <router-link v-if="!isLoggedIn" class="button is-" to="/login">Iniciar Sesión</router-link>
+        <router-link v-if="!isLoggedIn" class="login-link" to="/login">Iniciar Sesión</router-link>
         <div v-else class="user-info">
-          <span class="user-name" @click="toggleMenu">
+          <span class="user-name">
             <i class="bi bi-person-fill"></i> {{ userName }}
-            <i class="bi bi-caret-down-fill"></i> <!-- Icono para el menú desplegable -->
+          
           </span>
-          <div v-if="showMenu" class="dropdown-menu">
-            <ul>
-              <li @click="logout">Cerrar Sesión</li>
-            </ul>
+          <div>
+              <span @click="logout">Cerrar Sesión</span>
           </div>
         </div>
       </div>
@@ -479,7 +477,7 @@ export default {
     align-items: center; 
     overflow: hidden; 
     background-color: rgb(76, 0, 255);
-    position: relative; /* Añadido para posicionar el input */
+    position: relative; 
   }
 
   .image-slider img {
@@ -589,16 +587,16 @@ export default {
   .progreso-trans {
     width: 200px;
     height: 20px;
-    background-color: #e0e0e0; /* Color de fondo de la barra */
+    background-color: #e0e0e0;
     border-radius: 5px;
     overflow: hidden;
-    margin: 10px auto; /* Centrando la barra de progreso */
+    margin: 10px auto; 
   }
 
   .progreso-fill {
     height: 100%;
-    background-color: #ff0000; /* Color de la parte llena de la barra */
-    width: 75%; /* Ajusta este valor para cambiar el porcentaje de llenado */
+    background-color: #ff0000; 
+    width: 75%; 
   }
 
   .bi-caret-down-fill {
@@ -613,7 +611,7 @@ export default {
     background-color: rgb(216, 216, 216);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
     border-radius: 5px;
-    z-index: 1000;
+    z-index: 100;
     width: 150px;
   }
 

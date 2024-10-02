@@ -34,7 +34,7 @@
         keyword: null,
         movies: [],
         series: [],
-        currentType: 'movie', // Default to movies
+        currentType: 'movie', 
       };
     },
     computed: {
@@ -66,7 +66,7 @@
         this.currentType = type;
       },
       getImageUrl(path) {
-        return path ? `https://image.tmdb.org/t/p/w500${path}` : 'default_image.jpg'; // Cambia 'default_image.jpg' a una imagen por defecto si no hay imagen.
+        return path ? `https://image.tmdb.org/t/p/w500${path}` : 'default_image.jpg'; 
       }
     }
   };
@@ -101,7 +101,7 @@
   
   .grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Controla el tamaño de las columnas */
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
     grid-gap: 20px;
   }
   

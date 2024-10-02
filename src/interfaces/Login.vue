@@ -75,17 +75,14 @@ export default {
 
     const data = await response.json();
     
-    // Verifica que las imágenes se obtengan correctamente
     console.log('Imágenes obtenidas de la API:', data.results);
     
     images.value = data.results.map(movie => {
-      // Verifica cada URL generada
       const imageUrl = `https://image.tmdb.org/t/p/original${movie.backdrop_path}`;
       console.log('URL de la imagen:', imageUrl);
       return imageUrl;
     });
 
-    // Comienza el cambio de imágenes si hay imágenes disponibles
     if (images.value.length > 0) {
       startImageSlider();
     } else {
@@ -102,7 +99,6 @@ function startImageSlider() {
 
   // Verifica que haya imágenes disponibles
   if (images.value.length > 0) {
-    // Aplicar la primera imagen de inmediato
     console.log('Aplicando primera imagen:', images.value[0]);
     document.body.style.backgroundImage = `url(${images.value[0]})`;
     document.body.style.backgroundSize = 'cover';
@@ -119,14 +115,14 @@ function startImageSlider() {
     currentImageIndex = (currentImageIndex + 1) % images.value.length;
     console.log('Cambiando a la imagen:', images.value[currentImageIndex]);
     document.body.style.backgroundImage = `url(${images.value[currentImageIndex]})`;
-  }, 5000); // Cambia la imagen cada 5 segundos
+  }, 5000); 
 }
 
 
-    // Limpiar el background al desmontar el componente
+   
     onUnmounted(() => {
-      clearInterval(imageInterval); // Limpiar el intervalo
-      document.body.style.backgroundImage = ''; // Eliminar el fondo
+      clearInterval(imageInterval); 
+      document.body.style.backgroundImage = '';
     });
 
     async function onsubmit() {
@@ -224,14 +220,14 @@ body {
 
 body::before {
   content: '';
-  position: fixed; /* Cambia de absolute a fixed para que cubra toda la ventana */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Ajusta la opacidad aquí */
+  background-color: rgba(0, 0, 0, 0.5); 
   z-index: 1;
-  pointer-events: none; /* Asegura que los eventos no sean bloqueados por la capa */
+  pointer-events: none; 
 }
 
 .contenedorInicial {
@@ -240,7 +236,7 @@ body::before {
   align-items: center;
   height: 100vh;
   position: relative;
-  z-index: 2; /* Coloca el contenido por encima del filtro */
+  z-index: 2; 
 }
 
 .Login {
@@ -251,7 +247,7 @@ body::before {
   max-width: 400px;
   text-align: center;
   position: relative;
-  z-index: 3; /* Asegura que el formulario también esté por encima del filtro */
+  z-index: 3; 
 }
 
 fieldset {

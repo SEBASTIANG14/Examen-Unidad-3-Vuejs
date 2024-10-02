@@ -71,7 +71,7 @@
         }
       },
       getImageUrl(path) {
-        return path ? `https://image.tmdb.org/t/p/w500${path}` : 'default_image.jpg'; // Cambia 'default_image.jpg' a una imagen por defecto si no hay imagen.
+        return path ? `https://image.tmdb.org/t/p/w500${path}` : 'default_image.jpg'; 
       }
     },
     components: {

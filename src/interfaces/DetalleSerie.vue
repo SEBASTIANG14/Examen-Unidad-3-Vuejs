@@ -148,12 +148,12 @@
   
   .seasons-wrapper {
     display: flex;
-    flex-wrap: nowrap; /* Asegura que las tarjetas no se envuelvan */
-    overflow-x: auto; /* Permite desplazamiento horizontal si es necesario */
+    flex-wrap: nowrap;
+    overflow-x: auto; 
   }
   
   .season-card {
-    min-width: 200px; /* Ancho mínimo de cada tarjeta */
+    min-width: 200px; 
     margin: 10px;
     text-align: center;
   }

@@ -1,10 +1,11 @@
 <template>
   <div>
     <div class="nav">
-      <h1>Peliculas algo mal <i class="bi bi-fire"></i></h1>
-      
+      <h1 class="title">Peliculas algo mal <i class="bi bi-fire"></i></h1>
+      <hr>
+
       <div class="auth-section">
-        <router-link v-if="!isLoggedIn" class="button is-primary" to="/login">Iniciar Sesión</router-link>
+        <router-link v-if="!isLoggedIn" class="button is-" to="/login">Iniciar Sesión</router-link>
         <div v-else class="user-info">
           <span class="user-name" @click="toggleMenu">
             <i class="bi bi-person-fill"></i> {{ userName }}
@@ -31,7 +32,8 @@
 
   <!-- Sección 1: Tendencias -->
   <div class="now-playing-section">
-    <h2>Tendencias</h2>
+    <h2 class="title has-text-left">Tendencias</h2>
+    <hr>
     <div class="now-playing-slider">
       <button @click="prevMovie" class="nav-button left">❮</button>
       <div class="movie-container">
@@ -45,7 +47,7 @@
             <img
               :src="movie.poster_path"
               alt="Now Playing Movie"
-              class="movie-image"
+              class="movie-image card"
             />
             <p>{{ movie.title }}</p>
             <div class="progreso-trans">
@@ -61,7 +63,8 @@
 
   <!-- Sección 2: Películas Populares -->
   <div class="popular-movies-section">
-    <h2>Populares</h2>
+    <h2 class="title has-text-left">Populares</h2>
+    <hr>
     <div class="now-playing-slider">
       <button @click="prevPopularMovie" class="nav-button left">❮</button>
       <div class="movie-container">
@@ -91,7 +94,8 @@
 
 <!-- Sección 3: Películas Mejor Valoradas -->
   <div class="top-rated-movies-section">
-    <h2>Películas Mejor Valoradas</h2>
+    <h2 class="title has-text-left">Películas Mejor Valoradas</h2>
+    <hr>
     <div class="now-playing-slider">
       <button @click="prevTopRatedMovie" class="nav-button left">❮</button>
       <div class="movie-container">
@@ -121,7 +125,8 @@
 
   <!-- Sección 4: Series o TV -->
   <div class="upcoming-movies-section">
-    <h2>Series o TV</h2>
+    <h2 class="title has-text-left">Series y TV</h2>
+    <hr>
     <div class="now-playing-slider">
       <button @click="prevUpcomingMovie" class="nav-button left">❮</button>
       <div class="movie-container">
@@ -396,6 +401,8 @@ export default {
 </script>
 
 <style scoped>
+
+
   .nav {
     display: flex;
     justify-content: space-between;
@@ -405,10 +412,12 @@ export default {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
 
-  h1 {
-    color: #3498db;
-    margin: 0;
+  h2{
+    margin-left: 20px;
+    margin-right: 20px;
   }
+
+
 
   .auth-section {
     display: flex;
@@ -462,6 +471,7 @@ export default {
   }
 
   .image-slider {
+    
     height: 500px;
     width: 100%; 
     display: flex;
@@ -473,10 +483,12 @@ export default {
   }
 
   .image-slider img {
+   
+
     width: 100%;
     height: 100%; 
     object-fit: cover; 
-    border-radius: 10px;
+    border-radius: 8px;
     opacity: 0.7;
   }
 
@@ -532,18 +544,19 @@ export default {
   }
 
   .movies-wrapper {
+    
     display: flex;
     transition: transform 0.3s ease;
   }
 
   .movie-image {
+  
     width: 200px; 
     margin: 0 5px;
-    border-radius: 10px;
+    border-radius: 8px;
   }
 
   .nav-button {
-    background-color: rgba(0, 0, 0, 0.8);
     border: none;
     cursor: pointer;
     padding: 10px;

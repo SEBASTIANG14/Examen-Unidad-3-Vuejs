@@ -1,11 +1,11 @@
 <template>
   <div class="contenedorInicial">
-    <div class="Login" v-if="!acceso">
-      <h1>Login</h1>
+    <div class="box Login" v-if="!acceso">
+      <h1 class="title">Login</h1>
+      <hr>
       <form @submit.prevent="onsubmit">
         <fieldset>
-          <div class="input-container">
-            <i class="bi bi-person-fill"></i>
+          <div>
             <input
               type="text"
               v-model="username"
@@ -13,12 +13,12 @@
               required
               name="username"
               id="username"
+              class="input"
             />
           </div>
         </fieldset>
         <fieldset>
           <div class="input-container">
-            <i class="bi bi-lock-fill"></i>
             <input
               type="password"
               v-model="password"
@@ -26,37 +26,109 @@
               required
               name="password"
               id="password"
+              class="input"
             />
           </div>
         </fieldset>
-        <button type="submit" :disabled="loading">
+        <button type="submit" :disabled="loading" class="button is-dark">
           <span v-if="loading">Cargando...</span>
           <span v-else>Acceder</span>
         </button>
       </form>
-      <p v-if="errorAcceso" class="error-message">{{ errorMessage }}</p> <!-- Mensaje de error dinámico -->
+      <p v-if="errorAcceso" class="error-message">{{ errorMessage }}</p>
     </div>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 export default {
   name: 'Login',
   setup() {
     const router = useRouter();
-
     const username = ref('');
     const password = ref('');
     const acceso = ref(false);
     const errorAcceso = ref(false);
     const loading = ref(false);
-    const errorMessage = ref(''); 
-      
-    console.log('Login component loaded');
+    const errorMessage = ref('');
+    const images = ref([]);
+    let imageInterval = null;
+
+    async function fetchImages() {
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1Mzg4NTEzMjQ2ZDlhMGU0MmM0N2M1M2NkOGNlOTlkZiIsIm5iZiI6MTcyNzc0MjMwMS40MzIzMTIsInN1YiI6IjY2ZjJmNjk3ZmMwMDk4MzkxNDhkOTA3YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.e3FHFu1Kg9ZpniMoe7vDgwQNDgf6E-3azA8C9BFozgI'
+    }
+  };
+
+  try {
+    const response = await fetch('https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc', options);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
     
+    // Verifica que las imágenes se obtengan correctamente
+    console.log('Imágenes obtenidas de la API:', data.results);
+    
+    images.value = data.results.map(movie => {
+      // Verifica cada URL generada
+      const imageUrl = `https://image.tmdb.org/t/p/original${movie.backdrop_path}`;
+      console.log('URL de la imagen:', imageUrl);
+      return imageUrl;
+    });
+
+    // Comienza el cambio de imágenes si hay imágenes disponibles
+    if (images.value.length > 0) {
+      startImageSlider();
+    } else {
+      console.error('No se obtuvieron imágenes.');
+    }
+
+  } catch (err) {
+    console.error('Error fetching images:', err);
+  }
+}
+
+function startImageSlider() {
+  let currentImageIndex = 0;
+
+  // Verifica que haya imágenes disponibles
+  if (images.value.length > 0) {
+    // Aplicar la primera imagen de inmediato
+    console.log('Aplicando primera imagen:', images.value[0]);
+    document.body.style.backgroundImage = `url(${images.value[0]})`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundPosition = 'center';
+    document.body.style.backgroundAttachment = 'fixed';
+    document.body.style.transition = 'background-image 1s ease-in-out';
+  } else {
+    console.error('No hay imágenes para mostrar en el slider.');
+    return;
+  }
+
+  // Inicia el intervalo para cambiar las imágenes
+  imageInterval = setInterval(() => {
+    currentImageIndex = (currentImageIndex + 1) % images.value.length;
+    console.log('Cambiando a la imagen:', images.value[currentImageIndex]);
+    document.body.style.backgroundImage = `url(${images.value[currentImageIndex]})`;
+  }, 5000); // Cambia la imagen cada 5 segundos
+}
+
+
+    // Limpiar el background al desmontar el componente
+    onUnmounted(() => {
+      clearInterval(imageInterval); // Limpiar el intervalo
+      document.body.style.backgroundImage = ''; // Eliminar el fondo
+    });
+
     async function onsubmit() {
       loading.value = true; 
       try {
@@ -115,6 +187,16 @@ export default {
       }
     }
 
+    onMounted(() => {
+      // Establece una imagen de fondo predeterminada al cargar el componente
+      document.body.style.backgroundImage = 'url("https://via.placeholder.com/1920x1080")';
+      document.body.style.backgroundSize = 'cover';
+      document.body.style.backgroundPosition = 'center';
+      document.body.style.backgroundAttachment = 'fixed';
+
+      fetchImages();
+    });
+
     return {
       username,
       password,
@@ -130,93 +212,64 @@ export default {
 
 <style scoped>
 body {
-  background-color: #ffffff;
+  position: relative;
+  transition: background-image 1s ease-in-out;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+body::before {
+  content: '';
+  position: fixed; /* Cambia de absolute a fixed para que cubra toda la ventana */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Ajusta la opacidad aquí */
+  z-index: 1;
+  pointer-events: none; /* Asegura que los eventos no sean bloqueados por la capa */
+}
+
+.contenedorInicial {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  position: relative;
+  z-index: 2; /* Coloca el contenido por encima del filtro */
 }
 
 .Login {
   background-color: #ffffff;
-  margin: 10% auto;
-  padding: 20px; 
-  border: 2px solid #000000;
-  border-radius: 20px;
+  padding: 20px;
+  border-radius: 16px;
   width: calc(100% - 30px);
   max-width: 400px;
-  height: auto;
   text-align: center;
+  position: relative;
+  z-index: 3; /* Asegura que el formulario también esté por encima del filtro */
 }
 
 fieldset {
-  margin-bottom: 20px;
-  padding: 0 10px;
+  margin-bottom: 1px;
+  padding: 0;
   border: none;
 }
 
-button {
-  padding: 0.75em 1.5em;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-  cursor: pointer;
-  font-size: 1em;
-  font-weight: bold;
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-}
-
-button:hover {
-  background-color: #ffffff;
-  color: rgb(255, 166, 88);
-  border: 1px solid rgb(255, 166, 88);
-}
-
-h1 {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 2.5rem;
-  color: #75afff;
-  padding: 10px 20px;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.5);
-  text-transform: uppercase;
-  letter-spacing: 5px;
-}
-
-p {
-  font-family: Arial, sans-serif;
-}
-
-input {
-  outline: none;
-  display: block;
+.input {
   width: 100%;
-  border: none;
-  border-bottom: 2px solid rgba(173, 173, 173, 0.5);
-  margin: 10px 0px;
-  padding: 10px 15px;
-  box-sizing: border-box;
-  font-weight: 400;
-  transition: border 0.7s ease, color 0.7s ease;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
 }
 
-input:focus {
-  border: none;
-  border-bottom: 2px solid rgb(0, 0, 0);
-  color: darkgray;
-}
-
-.input-container {
-  position: relative;
-}
-
-.input-container i {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: gray
-}
-
-.input-container input {
-  padding-left: 35px;
+.button:disabled {
+  background-color: #ccc;
 }
 
 .error-message {
@@ -224,4 +277,6 @@ input:focus {
   font-weight: bold;
   margin-top: 10px;
 }
+
+
 </style>

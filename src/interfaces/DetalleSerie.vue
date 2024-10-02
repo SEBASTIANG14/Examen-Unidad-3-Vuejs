@@ -19,31 +19,33 @@
             <span>{{ series.vote_average * 10 }}%</span> Puntuación de usuario
           </div>
           <p class="overview">{{ series.overview }}</p>
-    
+  
           <!-- Información de todas las temporadas -->
           <div class="seasons-section">
             <h2>Temporadas</h2>
-            <div v-for="(season, index) in series.seasons" :key="season.id" class="season-card">
-              <router-link :to="'/serie/' + series.id + '/temporada/' + season.season_number">
-                <img :src="'https://image.tmdb.org/t/p/w185' + season.poster_path" alt="Poster de la temporada" v-if="season.poster_path" />
-                <p>{{ season.name }} ({{ season.air_date ? season.air_date.split('-')[0] : 'N/A' }})</p>
-                <p>{{ season.episode_count }} episodios</p>
-              </router-link>
+            <div class="seasons-wrapper">
+              <div v-for="(season, index) in series.seasons" :key="season.id" class="season-card">
+                <router-link :to="'/serie/' + series.id + '/temporada/' + season.season_number">
+                  <img :src="'https://image.tmdb.org/t/p/w185' + season.poster_path" alt="Poster de la temporada" v-if="season.poster_path" />
+                  <p>{{ season.name }} ({{ season.air_date ? season.air_date.split('-')[0] : 'N/A' }})</p>
+                  <p>{{ season.episode_count }} episodios</p>
+                </router-link>
+              </div>
             </div>
           </div>
-    
+  
           <!-- Validar la existencia de credits -->
           <div class="crew" v-if="series.credits?.crew && series.credits.crew.length">
             <p v-if="series.credits.crew[0]">
-              <strong>{{ series.credits.crew[0]?.name }}</strong> - {{ series.credits.crew[0]?.job }}
+              {{ series.credits.crew[0]?.name }} - {{ series.credits.crew[0]?.job }}
             </p>
             <p v-if="series.credits.crew[1]">
-              <strong>{{ series.credits.crew[1]?.name }}</strong> - {{ series.credits.crew[1]?.job }}
+              {{ series.credits.crew[1]?.name }} - {{ series.credits.crew[1]?.job }}
             </p>
           </div>
         </div>
       </div>
-    
+  
       <!-- Lista de palabras clave -->
       <div v-if="keywords.length">
         <h2>Palabras clave</h2>
@@ -58,7 +60,7 @@
           </router-link>
         </div>
       </div>
-    
+  
       <!-- Lista de actores principales -->
       <div v-if="series.credits?.cast && series.credits.cast.length" class="cast-section">
         <h2>Actores Principales</h2>
@@ -66,7 +68,7 @@
           <div v-for="actor in series.credits.cast.slice(0, 6)" :key="actor.id" class="cast-card">
             <router-link class="artist-class" :to="'/artista/' + actor.id">
               <img :src="'https://image.tmdb.org/t/p/w185' + actor.profile_path" :alt="actor.name" v-if="actor.profile_path" />
-              <p><strong>{{ actor.name }}</strong></p>
+              <p >{{ actor.name }}</p>
               <p>{{ actor.character }} ({{ actor.known_for_department }})</p>
             </router-link>
           </div>
@@ -81,7 +83,6 @@
     <Footer :userName="userName" />
   </template>
   
-  
   <script>
   import axios from 'axios'; 
   import Navbar from '../components/Navbar.vue';
@@ -94,12 +95,12 @@
         series: null,
         currentSeason: null,
         keywords: [],
-        userName: 'SEBASTIAN14'
+        userName: 'SEBASTIAN14',
       };
     },
     mounted() {
       this.fetchSeriesDetails();
-      this.fetchSeriesKeywords(); // Llamar a la función para obtener palabras clave
+      this.fetchSeriesKeywords();
     },
     methods: {
       async fetchSeriesDetails() {
@@ -108,7 +109,7 @@
         try {
           const response = await axios.get(`https://api.themoviedb.org/3/tv/${seriesId}?api_key=${apiKey}&append_to_response=credits`);
           this.series = response.data;
-          this.currentSeason = this.series.seasons[this.series.seasons.length - 1]; // Obtener la temporada actual
+          this.currentSeason = this.series.seasons[this.series.seasons.length - 1];
         } catch (error) {
           console.error('Error al obtener los detalles de la serie:', error);
         }
@@ -118,14 +119,13 @@
         const apiKey = '7dbf2be7efbc38c8a5ba78d99ae9f933';  
         try {
             const response = await axios.get(`https://api.themoviedb.org/3/tv/${seriesId}/keywords?api_key=${apiKey}`);
-            console.log('Series keywords response:', response.data);  // Verifica la respuesta de la API
-            this.keywords = response.data.results || [];  // Ajusta cómo accedes a los keywords
+            console.log('Series keywords response:', response.data);
+            this.keywords = response.data.results || [];
         } catch (error) {
             console.error('Error al obtener las palabras clave de la serie:', error);
         }
-        },
+      },
     },
-
     components: {
       Navbar,
       Footer
@@ -133,16 +133,29 @@
   };
   </script>
   
-  <style>
-  .current-season {
-    margin-top: 2rem;
-    text-align: left;
+  <style scoped>
+    body{
+        color: white;
+    }
+    p{
+        color: white;
+    }
+
+
+  .seasons-section {
+    margin-top: 20px;
   }
   
-  .current-season img {
-    border-radius: 8px;
-    max-width: 200px;
-    margin-top: 1rem;
+  .seasons-wrapper {
+    display: flex;
+    flex-wrap: nowrap; /* Asegura que las tarjetas no se envuelvan */
+    overflow-x: auto; /* Permite desplazamiento horizontal si es necesario */
+  }
+  
+  .season-card {
+    min-width: 200px; /* Ancho mínimo de cada tarjeta */
+    margin: 10px;
+    text-align: center;
   }
   
   .keywords-list {
@@ -157,7 +170,7 @@
     padding: 5px 10px;
     border-radius: 5px;
     font-size: 0.9rem;
-    cursor: pointer; /* Cambia el cursor a pointer para indicar que es clickable */
+    cursor: pointer;
   }
   </style>
   
